@@ -1,0 +1,11 @@
+{
+	"sites": ["https://www.gimmesomeoven.com/"]
+	,
+	"AdPlacementTypes" :[
+		
+		[
+			"AdThrive", "google_ads"
+		]
+
+	] 
+}

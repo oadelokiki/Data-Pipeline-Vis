@@ -1,0 +1,23 @@
+{
+  "name": "data-pipeline-vis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test index.tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oadelokiki/Data-Pipeline-Vis.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oadelokiki/Data-Pipeline-Vis/issues"
+  },
+  "homepage": "https://github.com/oadelokiki/Data-Pipeline-Vis#readme",
+  "dependencies": {
+    "extract-urls": "^1.3.2",
+    "fetch": "^1.1.0"
+  }
+}

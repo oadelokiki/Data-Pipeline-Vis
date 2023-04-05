@@ -1,0 +1,20 @@
+Ideally, what I think I can do to scrape/generate derivative data is to first find data from multiple sources.
+
+I think that there's a lot of room to do this. For example, I could scrape from a list of sites known to be all about nascar, and then my data transformation would look like the following. 
+
+scrape all of the h1 elements and quantify/qualify from these sites --> find out how many of these h1 element are written in comic sans --> Of those, I can find out how many of these element are written in fonts larger than 24px. 
+
+Each of the above steps could be considered as it's own view generated in the DB. Why this is important is that as we begin to scrape more and more data, there will be a lot of different data from step-to-step. It's important that we can actually verify that our data is correct, and that we're measuring things properly. If null data, or otherwise unclean data is getting through, that could mean bad things for the quality of the data that we receive.
+
+Enabling monitoring at each checkpoint and being able to make sure that our data is within some range of expected values is quintessential.
+****************************************************************************************
+My backend application will be able to scrape a specific set of pages for ads,images, and videos --> find out the dimensions, etc, etc, of those particular placements --> determine the actual location of the placement based on the styling of the element --> and categorize (in a final view) the site for centrally it tends to place ads. 
+
+Embedded monitoring will populate another view in the DB, where we may test againast some certain set of expeceted values for specific data as it's transformed, and will send alerts to a websocket dashboard on the frontend.
+
+When a monitoring event occurs, a link will be send to a 2-d visualization of the pipeline, with some sort of diagram that points out the structure of the DB, while also pointing to the source and endpoint where the expected value didn't match the received value.
+
+Once this frontend has live monitoring, and can generate animated views for montoring, it will also live update with the scores of each company.
+
+
+

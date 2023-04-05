@@ -16,6 +16,8 @@
 const siteList = require("../siteList.json");
 const fetch = require("node-fetch")
 const extractUrls = require("extract-urls")
+const parse = require ('html-dom-parser')
+const jsdom = require("jsdom");
 
 async function getAllSubDomains(){
 	//should scrape the sitemap_index.xml for all of the sites.xml(s)
@@ -56,20 +58,32 @@ async function getAllSubDomains(){
 
 }
 
+
 async function scrapeAdPlacements(){
 	
 	const subdomains = await getAllSubDomains();
 	//Array of subdomains from the main site.
-	//
+
 	for(let i = 0; i < subdomains.length; i++){
 		const site = await fetch(subdomains[i]);
 		const siteHTML = await site.text();
-
+		
+		//next I have to parse the actual html of all of these sites, and find out what I need data-wise from each ad placement.
 		//this is the part where I SHOULD put the data into a sequelize model, but I'll fully load in memory, and realease the long list of subdomains once it's all loaded.
 
-		console.log(siteHTML);
 
+		const dom = new jsdom.JSDOM(siteHTML);
+		let adPlacementsByType = []
+	
+		for(let r = 0 ; r < siteList["AdPlacementTypes"].length; r++){
+			const elementList = dom.window.document.querySelector(`[id^="${siteList["AdPlacementTypes"][r]}"]`)
+			console.log(elementList);		
+		}
 
+		
+		const htmlDoc = parse(siteHTML);
+
+		
 	}
 }
 

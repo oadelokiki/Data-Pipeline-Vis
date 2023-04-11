@@ -67,8 +67,7 @@ async function scrapeAdPlacements(){
 
 	
 	const subdomains = await getAllSubDomains();
-	console.log("Here's a cleaned list of all subdomains that have actual html page content.")
-	console.log(subdomains);
+	console.log("Here's to collecting all of the subdomains")
 	//Array of subdomains from the main site.
 	var exampleCounter = 0;
 	 const browser = await puppeteer.launch();
@@ -76,22 +75,7 @@ async function scrapeAdPlacements(){
          await page.setDefaultNavigationTimeout(0);
 
 	for(let i = 0; i < subdomains.length; i++){
-/*
-		const site = await fetch(subdomains[i]);
-		const siteHTML = await site.text();
-		
-		
-	
 
-		const htmlDoc = parse(siteHTML);
-
-		//does this refer to the way that I actually see the element in the DOM
-		for(let j = 0; j < htmlDoc.length; j++){
-			console.log(htmlDoc[j]);
-		}
-		break;
-		//console.log(siteHTML);			
-	*/
 		try{
 		
 
@@ -102,16 +86,18 @@ async function scrapeAdPlacements(){
 			await page.setViewport({width: 1080, height: 1024});
 			const data = await page.evaluate( () => {
 				const siteList = {"AdPlacementTypes":["AdThrive", "google_ads"]}
+				//All of the data i'm gonna be yanking from the sites
+				const adData = []; // how many ads are they showing, how large are these placements? What are their tags, if any, what's the metadata on these like. The more that I can answer these questions, the better purpose the webscraper will serve.
+				const imgData = []; // what are they displaying to their users? We can't see it, but we can analyze it for sure.
+				const adThriveData = []; // one type of ad they make use of 
+				const siteTitles = []; // what kind of site is this supposed to be 
+				const siteFormNames = []; //what kind of info do they collect from users
 
-				const adData = [];
-				const imgData = [];
-				const adThriveData =[];
 
 		///This for loop searches for all ads	
 			for(let ads = 0 ; ads < siteList["AdPlacementTypes"].length; ads++){
-
-				let datum2 = document.querySelectorAll("[id *= " + siteList["AdPlacementTypes"][ads] + "]");	
-				//only doing this so tha tI can ensure we're getting unique values
+				const datum2 = document.querySelectorAll("[id *= " + siteList["AdPlacementTypes"][ads] + "]");	
+				//only doing this so that I can ensure we're getting unique values
 				for(let d = 0 ; d < datum2.length; d++){
 					adData.push(datum2[d])
 
@@ -122,13 +108,20 @@ async function scrapeAdPlacements(){
 			
 			}
 
-			let datum = document.querySelectorAll("[class ^= " + "adthrive" + "]");
+			const datum = document.querySelectorAll("[class *= ad]");
+			const otherAds = document.querySelectorAll("[id *= Ad]");
+
+		//just wider coverage on the ads
+			for(let x = 0 ; x < otherAds.length ; x++){
+				adThriveData.push( otherAds[x] );		
+			} 
+
 			for(let one = 0 ; one < datum.length; one ++ ){
 				adThriveData.push(Object.keys(datum[one]));
 			}
 
 		//This next for loop is going to search for all images
-			let images = document.querySelectorAll("img")
+			const images = document.querySelectorAll("img")
 			for (let p = 0; p < images.length; p++){
 				if (Object.keys(images[p]).length == 0){
 					continue;
@@ -138,17 +131,24 @@ async function scrapeAdPlacements(){
 				}	
 			}
 		//I can start to extract this seemingly random data from the sites, but what's the point?
-			return {"adData": [... new Set(adData)], "imgData" : [... new Set(imgData)],"adThriveData": adThriveData};
+				siteTitles.push(document.querySelector("title").innerHTML);
+			const formdata = document.querySelectorAll("form")
+			for(let f = 0; f < formdata.length; f++){
+				siteFormNames.push(formdata[f]);
+			}
+
+				return {"adData": [... new Set(adData)], "imgData" : [... new Set(imgData)],"adThriveData": adThriveData, "siteTitles": [... new Set(adData)]};
 			})
 		  	
-		 	//usually i'd close the broweser on this lien 
-			console.log(data);
+ 
+
+			data["subdomains"] = subdomains;
+			console.log(data);			
+
 	
 		
-//			if (i == 30){
-//				break;
-//			}
-		}catch(err){
+	}catch(err){
+			throw(err)
 			continue;
 		}
 	}
@@ -157,7 +157,10 @@ async function scrapeAdPlacements(){
 
 
 scrapeAdPlacements();
-//Okay, so now that ive put some data, together, it's time to store it in a way that's persistent.
+//Okay, so now that ive put some data, together, it's time to store it in a way that's a bit more permanent
+//--> what's left for me to do now is connect the db by simply requiring the db. however, I still need to create the models for the data
+//
+//
 module.exports = {
 	getAllSubDomains,
 	scrapeAdPlacements,

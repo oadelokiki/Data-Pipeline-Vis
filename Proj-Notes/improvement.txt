@@ -1,0 +1,4 @@
+improve the scraper file by multithreading. That's some intense computing being done on the server side, and may require a bit more efficiency..
+
+Additionally, the actually crawler funciton could be a bit faster by multithraeading as well.
+

@@ -12,6 +12,8 @@
  * *	
  *	Funny enough,the models will only be usable on a site by site basis.
  *	
+ *
+ *	-->MAKE SURE TO LEAVE THE DATA DIRTY FOR NOW
  * */
 const siteList = require("../siteList.json");
 const fetch = require("node-fetch")
@@ -69,6 +71,9 @@ async function scrapeAdPlacements(){
 	console.log(subdomains);
 	//Array of subdomains from the main site.
 	var exampleCounter = 0;
+	 const browser = await puppeteer.launch();
+	const page = await browser.newPage();
+         await page.setDefaultNavigationTimeout(0);
 
 	for(let i = 0; i < subdomains.length; i++){
 /*
@@ -88,47 +93,71 @@ async function scrapeAdPlacements(){
 		//console.log(siteHTML);			
 	*/
 		try{
-		( async () => {
+		
 
-			const browser = await puppeteer.launch();
-        	          const page = await browser.newPage();
-				await page.setDefaultNavigationTimeout(0);	
-			  await page.goto(subdomains[i]);
+	
+        	  await page.goto(subdomains[i], {waitUntil: "load"});
 
 			  // Set screen size
 			await page.setViewport({width: 1080, height: 1024});
 			const data = await page.evaluate( () => {
 				const siteList = {"AdPlacementTypes":["AdThrive", "google_ads"]}
 
-				const divs = [];
-			
+				const adData = [];
+				const imgData = [];
+				const adThriveData =[];
+
+		///This for loop searches for all ads	
 			for(let ads = 0 ; ads < siteList["AdPlacementTypes"].length; ads++){
-					let datum = document.querySelectorAll("[id *= AdThrive]");
-					let datum2 = document.querySelectorAll("[id *= google_ads]")
-					let datum3 = document.querySelectorAll("[id *= ad]")
 
-					divs.push(datum);
-					divs.push(datum2);
+				let datum2 = document.querySelectorAll("[id *= " + siteList["AdPlacementTypes"][ads] + "]");	
+				//only doing this so tha tI can ensure we're getting unique values
+				for(let d = 0 ; d < datum2.length; d++){
+					adData.push(datum2[d])
+
+					
+					//this next part should start to reveal to me how i'd like to set up my sequelize models
 				}
+					
+			
+			}
 
-			return divs;
+			let datum = document.querySelectorAll("[class ^= " + "adthrive" + "]");
+			for(let one = 0 ; one < datum.length; one ++ ){
+				adThriveData.push(Object.keys(datum[one]));
+			}
+
+		//This next for loop is going to search for all images
+			let images = document.querySelectorAll("img")
+			for (let p = 0; p < images.length; p++){
+				if (Object.keys(images[p]).length == 0){
+					continue;
+				}
+				else{
+					imgData.push(images[p]['llOriginalAttrs']);
+				}	
+			}
+		//I can start to extract this seemingly random data from the sites, but what's the point?
+			return {"adData": [... new Set(adData)], "imgData" : [... new Set(imgData)],"adThriveData": adThriveData};
 			})
 		  	
-		  	await browser.close();
+		 	//usually i'd close the broweser on this lien 
 			console.log(data);
 	
-		})();
-			if (i == 2){
-				break;
-			}
+		
+//			if (i == 30){
+//				break;
+//			}
 		}catch(err){
 			continue;
 		}
 	}
+	await browser.close();
 }
 
-scrapeAdPlacements();
 
+scrapeAdPlacements();
+//Okay, so now that ive put some data, together, it's time to store it in a way that's persistent.
 module.exports = {
 	getAllSubDomains,
 	scrapeAdPlacements,

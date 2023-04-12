@@ -22,6 +22,10 @@ const parse = require ('html-dom-parser')
 const {JSDOM}  = require("jsdom");
 //web crawler
 const puppeteer = require("puppeteer")
+const {storeRawData} = require("./dbWriter")
+const {syncDatabaseModels} = require("./models/index");
+
+
 
 async function getAllSubDomains(){
 	//should scrape the sitemap_index.xml for all of the sites.xml(s)
@@ -30,7 +34,7 @@ async function getAllSubDomains(){
 	const sitemap_index = await fetch(siteList["sites"] + "sitemap.xml");
 	const sites_on_map  = await sitemap_index.text();
 	const locations = extractUrls(sites_on_map);
-
+	await syncDatabaseModels();
 	//at this points, locations is a nice array filled with the sitemaps of each subdomain
 	//
 	const masterURList = [];
@@ -64,7 +68,7 @@ async function getAllSubDomains(){
 
 //web scraper (scrapes from crawler results)
 async function scrapeAdPlacements(){
-
+	const scrapeResults = [];
 	
 	const subdomains = await getAllSubDomains();
 	console.log("Here's to collecting all of the subdomains")
@@ -73,6 +77,7 @@ async function scrapeAdPlacements(){
 	 const browser = await puppeteer.launch();
 	const page = await browser.newPage();
          await page.setDefaultNavigationTimeout(0);
+
 
 	for(let i = 0; i < subdomains.length; i++){
 
@@ -99,7 +104,7 @@ async function scrapeAdPlacements(){
 				const datum2 = document.querySelectorAll("[id *= " + siteList["AdPlacementTypes"][ads] + "]");	
 				//only doing this so that I can ensure we're getting unique values
 				for(let d = 0 ; d < datum2.length; d++){
-					adData.push(datum2[d])
+			adData.push(datum2[d])
 
 					
 					//this next part should start to reveal to me how i'd like to set up my sequelize models
@@ -141,26 +146,32 @@ async function scrapeAdPlacements(){
 			})
 		  	
  
+			//TODO map subdomains better
+			data["subdomain"] = subdomains[i];
+//			data["id"] = i + 1;					
 
-			data["subdomains"] = subdomains;
-			console.log(data);			
+			scrapeResults.push(data);
+			console.log(i + "subdomains scraped" );		
+			const stored = await storeRawData(data);
+			console.log(stored);
 
-	
-		
 	}catch(err){
 			throw(err)
 			continue;
 		}
 	}
 	await browser.close();
+	return scrapeResults;
+
 }
 
 
-scrapeAdPlacements();
 //Okay, so now that ive put some data, together, it's time to store it in a way that's a bit more permanent
 //--> what's left for me to do now is connect the db by simply requiring the db. however, I still need to create the models for the data
 //
 //
+//
+scrapeAdPlacements();
 module.exports = {
 	getAllSubDomains,
 	scrapeAdPlacements,

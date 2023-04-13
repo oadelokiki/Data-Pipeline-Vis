@@ -34,19 +34,19 @@ const RawSubdomain = sequelize.define("rawsubdomain", {
       allowNull:false
   },
   adThriveData:{
-    type:Sequelize.ARRAY(Sequelize.JSON),
+    type:Sequelize.JSON,
     allowNull:false
   },
   siteTitles:{
-    type:Sequelize.ARRAY(Sequelize.JSON),
+    type:Sequelize.JSONB,
     allowNull:false
   },
   adData:{
-    type:Sequelize.ARRAY(Sequelize.JSON),
+    type:Sequelize.JSONB,
     allowNull:false
   },
   imgData:{
-    type:Sequelize.ARRAY(Sequelize.JSON),
+    type:Sequelize.JSONB,
     allowNull:false
   }
 
@@ -54,8 +54,9 @@ const RawSubdomain = sequelize.define("rawsubdomain", {
 
 const CleanSubdomain = sequelize.define("cleansubdomain", {
 	id: {
+
 		type: Sequelize.INTEGER,
-		 primaryKey: true,
+		primaryKey: true,
 		autoIncrement : true,
 		allowNull: false,
   }, 
@@ -64,28 +65,29 @@ const CleanSubdomain = sequelize.define("cleansubdomain", {
       allowNull:false
   },
   adThriveData:{
-	  type:Sequelize.ARRAY(Sequelize.JSON),
+	  type:Sequelize.JSON,
 	  allowNull:false
   },
   siteTitles:{
-    type:Sequelize.ARRAY(Sequelize.JSON),
+    type:Sequelize.JSONB,
     allowNull:false
   },
   adData:{
-    type:Sequelize.ARRAY(Sequelize.JSON),
+    type:Sequelize.JSONB,
     allowNull:false
   },
   imgData:{
-    type:Sequelize.ARRAY(Sequelize.JSON),
+    type:Sequelize.JSONB,
     allowNull:false
   }
 
-}, {initialAutoIncrement : 1000});
+});
 
 async function syncDatabaseModels(){
 	//remove force : true (and don't replace ) on launch
 	await RawSubdomain.sync({force: true});
 	await CleanSubdomain.sync({force: true});
+
 	console.log("Database Synced and prepared for Models")
 }
 

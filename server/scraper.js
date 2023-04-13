@@ -34,6 +34,7 @@ async function getAllSubDomains(){
 	const sitemap_index = await fetch(siteList["sites"] + "sitemap.xml");
 	const sites_on_map  = await sitemap_index.text();
 	const locations = extractUrls(sites_on_map);
+
 	await syncDatabaseModels();
 	//at this points, locations is a nice array filled with the sitemaps of each subdomain
 	//

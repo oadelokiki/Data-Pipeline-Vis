@@ -45,7 +45,7 @@
 
 
 
-const {db, RawSubdomain, syncDatabaseModels} = require("./models/index");
+const {db, CleanSubdomain, RawSubdomain, syncDatabaseModels} = require("./models/index");
 
 
 
@@ -63,10 +63,25 @@ async function storeRawData(rsd){
 	return dbSubdomain;
 }
 
+async function storeCleanData(csd){
+	console.log("************************Now writing to the DB**********************");
+		
+		
+                const dbSubdomain = await RawSubdomain.create(rsd);
+
+                (dbSubdomain.subdomain + "written");
+
+        console.log("*************************Raw data written to the DB *********************");
+
+        return dbSubdomain;
+}
+
+
+
 
 module.exports = {
 	storeRawData, 
-
+	storeCleanData
 }
 
 	

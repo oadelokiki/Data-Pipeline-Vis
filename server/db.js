@@ -1,9 +1,11 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 const path = require('path');
 
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: path.join(__dirname, 'db.db'),
+const sequelize = new Sequelize('datavis', 'postgres', 'hi', {
+   
+	host: 'localhost',
+	port: '5432',
+	dialect: 'postgres',
     logging: false
 });
 

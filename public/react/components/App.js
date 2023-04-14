@@ -74,8 +74,8 @@ export const App = () => {
 				JSON.stringify(monitoring)
 			} </div>
 
-			<div>As a result of cleaning/security, I lost{ 1 -( monitoring["clean"] / monitoring["raw"]) * 100 } percent of the data scraped originally</div>
-			<div> AS a result database bottleneck I dont have acces to {1 -( monitoring["clean"]) * 100 } percent of my clean data </div>
+			<div>As a result of cleaning/security, I lost { (1 - ( monitoring["clean"] / monitoring["raw"])) * 100 } percent of the data scraped originally</div>
+			<div> AS a result database bottleneck I dont have acces to {(1 -( monitoring["analysis"] / monitoring["clean"])) * 100 } percent of my clean data </div>
 			
 			<button onClick = {scrapeData}> Scrape Data</button>
 

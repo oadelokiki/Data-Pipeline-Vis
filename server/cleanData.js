@@ -15,33 +15,66 @@ const {db, RawSubdomain, CleanSubdomain} = require("./models/index")
 //4. the data is now for transformation/calculation into the final table
 
 async function cleanData(rawsubdomains){
-	const allRawData = await RawSubdomain.findAll({raw: false});
-	const allCleanedData = await CleanSubdomain.findAll({raw: false});
-//	console.log(allRawData);
+	const oneinstance = await RawSubdomain.findOne({
+		where: {
+			id: 1
+		}
+	})		
+
+	
+	//console.log(oneinstance.dataValues);
+	const allRawData = await RawSubdomain.count();
+	const allCleanedData = await CleanSubdomain.count();	
+
+
+
 	//TODO: this is the part where i'd like to create a check against the raw data id fields, and
 	//find the newest id shared between the two tables, and CLEAN accordingly
-	if(allRawData.length > allCleanedData.length){
-		
-		for(let i = 0; i < (allRawData.length - allCleanedData.length); i++){
+	if(allRawData > allCleanedData){
+		const result = {}
+		for(let i = 1; i < (allRawData - allCleanedData); i++){
 
-			const dataToClean = allRawData[allCleanedData.length - 1 + i];
-//			console.log(dataToClean.id)			
+			
+			const dataToClean = await RawSubdomain.findOne({
+				where: {
+					id: i
+				}
+			})
+		//	console.log(dataToClean)			
 			//console.log(i)
 			for(const property in dataToClean){
 //			console.log(dataToClean[property])
 				if(property == "dataValues"){
-					console.log("read")
+	//				console.log("read")
 					for(value in dataToClean[property]){
 						if(value  == "adThriveData" || value == "siteTitles" || value == "adData" || value == "imgData"){
+							const arr = [];
 							for(let m = 0; m < dataToClean[property][value].length; m++){
-								console.log(dataToClean[property][value][m]);	
-						
+	//							console.log(dataToClean[property][value][m]);	
+								if(Object.keys(dataToClean[property][value][m]).length == 0){
+									continue
+								}
+								else{
+									arr.push(dataToClean[property][value][m]);
+
+								}
 							}
+							result[value] = arr;
+		//					console.log(arr);
+						}
+						else if(value == "subdomain"){
+
+							result[value] = dataToClean[property][value];
+
 						}
 					}
 				}
 			}
+		
+		console.log(result)
+			
 		}
+	
 			
 	}
 			

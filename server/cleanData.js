@@ -31,8 +31,8 @@ async function cleanData(rawsubdomains){
 	//TODO: this is the part where i'd like to create a check against the raw data id fields, and
 	//find the newest id shared between the two tables, and CLEAN accordingly
 	if(allRawData > allCleanedData){
-		const result = {}
-		for(let i = 1; i < (allRawData - allCleanedData); i++){
+		var result = {}
+		for(let i = allCleanedData + 1; i < ( allRawData ); i++){
 
 			
 			const dataToClean = await RawSubdomain.findOne({
@@ -40,6 +40,10 @@ async function cleanData(rawsubdomains){
 					id: i
 				}
 			})
+
+			if(Object.keys(dataToClean).length == 0 ){
+				break;
+			}
 		//	console.log(dataToClean)			
 			//console.log(i)
 			for(const property in dataToClean){
@@ -70,9 +74,10 @@ async function cleanData(rawsubdomains){
 					}
 				}
 			}
-		
-		console.log(result)
-			
+			console.log(result);
+			result = await CleanSubdomain.create(result);
+			console.log("completee")
+					
 		}
 	
 			

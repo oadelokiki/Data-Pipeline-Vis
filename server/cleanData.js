@@ -71,6 +71,7 @@ async function cleanData(rawsubdomains){
 							result[value] = dataToClean[property][value];
 
 						}
+						result["subdomain"] = dataToClean[property]["subdomain"];
 					}
 				}
 			}

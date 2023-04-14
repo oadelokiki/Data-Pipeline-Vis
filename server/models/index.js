@@ -83,11 +83,36 @@ const CleanSubdomain = sequelize.define("cleansubdomain", {
 
 });
 
+const subDomainAnalysisResult = sequelize.define("subdomainanalysisresult", {
+		id: {
+			type: Sequelize.INTEGER,
+			primaryKey: true,
+			autoIncrement : true,
+			allowNull: false
+		}, 
+		subdomain: {
+			type: Sequelize.STRING,
+			allowNull: false
+		},
+		dataScraped: {
+			type: Sequelize.INTEGER,
+			allowNull: false
+		},
+		dataRelevant: {
+			type: Sequelize.INTEGER,
+			allowNull: false
+		},
+		dataRatio : {
+			type: Sequelize.DOUBLE,
+			allowNull: false
+		}
+});
+
 async function syncDatabaseModels(){
 	//remove force : true (and don't replace ) on launch
 	await RawSubdomain.sync({force: true});
 	await CleanSubdomain.sync({force: true});
-
+	await subDomainAnalysisResult.sync({force: true});
 	console.log("Database Synced and prepared for Models")
 }
 
@@ -95,5 +120,6 @@ module.exports = {
 	db: sequelize,
 	RawSubdomain, 
 	CleanSubdomain,
+	subDomainAnalysisResult,
 	syncDatabaseModels
 };

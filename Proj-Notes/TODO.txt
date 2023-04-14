@@ -10,7 +10,7 @@
 
 //--> scrape the crawling trail  and store the data
 
-//--> first the data is to be cleaned. The "data",will be nearly every piece of information that we can grab from these sites --> TODO Maximize data grabbed from the site: We're looking at a minimum of 10 different database columns --> TODO create The first DB Table
+//--> first the data is to be cleaned. The "data",will be nearly every piece of information that we can grab from these sites -->  TODO create The first DB Table
 //
 //--> next, once the data is cleaned, it'll be stored elsewhere --> TODO Create the 2nd DB table/ perhaps a 2nd DB
 

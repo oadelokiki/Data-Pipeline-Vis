@@ -25,9 +25,9 @@ async function cleanData(rawsubdomains){
 	//console.log(oneinstance.dataValues);
 	const allRawData = await RawSubdomain.count();
 	const allCleanedData = await CleanSubdomain.count();	
-
-
-
+	
+	const returnVal = []
+	
 	//TODO: this is the part where i'd like to create a check against the raw data id fields, and
 	//find the newest id shared between the two tables, and CLEAN accordingly
 	if(allRawData > allCleanedData){
@@ -78,6 +78,7 @@ async function cleanData(rawsubdomains){
 			console.log(result);
 			result = await CleanSubdomain.create(result);
 			console.log("completee")
+			returnVal.push(result);
 					
 		}
 	
@@ -87,7 +88,9 @@ async function cleanData(rawsubdomains){
                         
 //			console.log(cleanedObj);	
 	
-	return 1;
+	return returnVal;
 }
 
-cleanData();
+module.exports =[
+	cleanData
+]

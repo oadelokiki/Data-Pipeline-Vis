@@ -7,6 +7,3 @@ const pipeline = require('./pipeline');
 router.use('/pipeline', pipeline);
 
 module.exports = router;
-~                            
-
-

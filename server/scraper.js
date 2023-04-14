@@ -23,19 +23,21 @@ const {JSDOM}  = require("jsdom");
 //web crawler
 const puppeteer = require("puppeteer")
 const {storeRawData} = require("./dbWriter")
-const {syncDatabaseModels} = require("./models/index");
+const {syncDatabaseModels, RawSubdomain} = require("./models/index");
 
 
 
 async function getAllSubDomains(){
 	//should scrape the sitemap_index.xml for all of the sites.xml(s)
 	//each list should then be scraped, fetching each of the domains available on that site.
-	//
+	
+	
+
 	const sitemap_index = await fetch(siteList["sites"] + "sitemap.xml");
 	const sites_on_map  = await sitemap_index.text();
 	const locations = extractUrls(sites_on_map);
 
-	await syncDatabaseModels();
+//	await syncDatabaseModels();
 	//at this points, locations is a nice array filled with the sitemaps of each subdomain
 	//
 	const masterURList = [];
@@ -70,7 +72,8 @@ async function getAllSubDomains(){
 //web scraper (scrapes from crawler results)
 async function scrapeAdPlacements(){
 	const scrapeResults = [];
-	
+	const range = await RawSubdomain.count();
+
 	const subdomains = await getAllSubDomains();
 	console.log("Here's to collecting all of the subdomains")
 	//Array of subdomains from the main site.
@@ -80,7 +83,7 @@ async function scrapeAdPlacements(){
          await page.setDefaultNavigationTimeout(0);
 
 
-	for(let i = 0; i < subdomains.length; i++){
+	for(let i = range + 1; i < subdomains.length; i++){
 
 		try{
 		
@@ -147,7 +150,6 @@ async function scrapeAdPlacements(){
 			})
 		  	
  
-			//TODO map subdomains better
 			data["subdomain"] = subdomains[i];
 //			data["id"] = i + 1;					
 
@@ -172,7 +174,8 @@ async function scrapeAdPlacements(){
 //
 //
 //
-scrapeAdPlacements();
+//scrapeAdPlacements();
+
 module.exports = {
 	getAllSubDomains,
 	scrapeAdPlacements,
